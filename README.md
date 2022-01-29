@@ -13,23 +13,24 @@ Examples are presented in R (&gt;= 4.1.0).
 Where applicable, this document uses terms defined in the [Fantasy Land
 spec](https://github.com/fantasyland/fantasy-land)
 
-**Translations** \*
-[Portuguese](https://github.com/alexmoreno/jargoes-programacao-funcional)
-\*
-[Spanish](https://github.com/idcmardelplata/functional-programming-jargon/tree/master)
-\* [Chinese](https://github.com/shfshanyue/fp-jargon-zh) \* [Bahasa
-Indonesia](https://github.com/wisn/jargon-pemrograman-fungsional) \*
-[Python
-World](https://github.com/jmesyou/functional-programming-jargon.py) \*
-[Scala
-World](https://github.com/ikhoon/functional-programming-jargon.scala) \*
-[Rust
-World](https://github.com/JasonShin/functional-programming-jargon.rs) \*
-[Korean](https://github.com/sphilee/functional-programming-jargon) \*
-[Haskell
-Turkish](https://github.com/mrtkp9993/functional-programming-jargon)
+## Translations
 
-**Table of Contents** RM(noparent,notop)
+-   [Portuguese](https://github.com/alexmoreno/jargoes-programacao-funcional)
+-   [Spanish](https://github.com/idcmardelplata/functional-programming-jargon/tree/master)
+-   [Chinese](https://github.com/shfshanyue/fp-jargon-zh)
+-   [Bahasa
+    Indonesia](https://github.com/wisn/jargon-pemrograman-fungsional)
+-   [Python
+    World](https://github.com/jmesyou/functional-programming-jargon.py)
+-   [Scala
+    World](https://github.com/ikhoon/functional-programming-jargon.scala)
+-   [Rust
+    World](https://github.com/JasonShin/functional-programming-jargon.rs)
+-   [Korean](https://github.com/sphilee/functional-programming-jargon)
+-   [Haskell
+    Turkish](https://github.com/mrtkp9993/functional-programming-jargon)
+
+## Table of Contents
 
 -   [Arity](#arity)
 -   [Higher-Order Functions (HOF)](#higher-order-functions-hof)
@@ -82,8 +83,6 @@ Turkish](https://github.com/mrtkp9993/functional-programming-jargon)
 -   [Partial function](#partial-function)
 -   [Functional Programming Libraries in
     JavaScript](#functional-programming-libraries-in-javascript)
-
-/RM
 
 ## Arity
 
@@ -175,9 +174,9 @@ A closure is a function that encloses its surrounding state by
 referencing fields external to its body. The enclosed state remains
 across invocations of the closure.
 
-**Further reading/Sources** \* [Lambda Vs
+**Further reading/Sources** - [Lambda Vs
 Closure](http://stackoverflow.com/questions/220658/what-is-the-difference-between-a-closure-and-a-lambda)
-\* [JavaScript Closures highly voted
+- [JavaScript Closures highly voted
 discussion](http://stackoverflow.com/questions/111102/how-do-javascript-closures-work)
 
 ## Partial Application
@@ -235,7 +234,7 @@ add_2(10)
 #> [1] 12
 ```
 
-**Further reading** \* [Favoring
+**Further reading** - [Favoring
 Curry](http://fr.umio.us/favoring-curry/)
 
 ## Function Composition
