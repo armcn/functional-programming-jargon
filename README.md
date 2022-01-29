@@ -112,15 +112,11 @@ A function which takes a function as an argument and/or returns a
 function.
 
 ``` r
-filter <- \(predicate, xs) Filter(predicate, xs)
-```
-
-``` r
 is <- \(type) \(x) inherits(x, type)
 ```
 
 ``` r
-filter(is("numeric"), list(0, "1", 2, NULL)) 
+Filter(is("numeric"), list(0, "1", 2, NULL)) 
 #> [[1]]
 #> [1] 0
 #> 
@@ -173,11 +169,6 @@ can frequently be passed around as objects.
 A closure is a function that encloses its surrounding state by
 referencing fields external to its body. The enclosed state remains
 across invocations of the closure.
-
-**Further reading/Sources** - [Lambda Vs
-Closure](http://stackoverflow.com/questions/220658/what-is-the-difference-between-a-closure-and-a-lambda)
-- [JavaScript Closures highly voted
-discussion](http://stackoverflow.com/questions/111102/how-do-javascript-closures-work)
 
 ## Partial Application
 
@@ -234,9 +225,6 @@ add_2(10)
 #> [1] 12
 ```
 
-**Further reading** - [Favoring
-Curry](http://fr.umio.us/favoring-curry/)
-
 ## Function Composition
 
 The act of putting two functions together to form a third function where
@@ -244,7 +232,7 @@ the output of one function is the input of the other.
 
 ``` r
 compose <- \(f, g) \(a) f(g(a)) # Definition
-floor_and_to_string <- compose(\(val) as.character(val), floor) # Usage
+floor_and_to_string <- compose(as.character, floor) # Usage
 floor_and_to_string(121.212121)
 #> [1] "121"
 ```
@@ -318,7 +306,7 @@ greeting
 #> [1] "Hi, Brianne"
 ```
 
-… and this one modifies state outside of the function.
+…and this one modifies state outside of the function.
 
 ## Side effects
 
@@ -362,7 +350,7 @@ Higher-Order functions. A.K.A Tacit programming.
 
 ``` r
 # Given
-map <- \(fn) \(list) lapply(list, fn)
+map <- \(fn) \(list) Map(fn, list)
 add <- \(a) \(b) a + b
 
 # Then
@@ -373,6 +361,11 @@ increment_all <- \(numbers) map(add(1))(numbers)
 # Points-free - The list is an implicit argument
 increment_all_2 = map(add(1))
 ```
+
+`increment_all` identifies and uses the parameter `numbers`, so it is
+not points-free. increment\_all\_2 is written just by combining
+functions and values, making no mention of its arguments. It is
+points-free.
 
 ## Predicate
 
@@ -408,4 +401,143 @@ add_one(2L)
 #> [1] 3
 add_one("some string") |> tryCatch(error = \(e) print(e))
 #> <simpleError in contract(num): Contract violated: expected integer -> logical>
+```
+
+## Category
+
+A category in category theory is a collection of objects and morphisms
+between them. In programming, typically types act as the objects and
+functions as morphisms.
+
+To be a valid category 3 rules must be met:
+
+There must be an identity morphism that maps an object to itself. Where
+a is an object in some category, there must be a function from `a -> a`.
+Morphisms must compose. Where `a`, `b`, and `c` are objects in some
+category, and `f` is a morphism from `a -> b`, and `g` is a morphism
+from `b -> c`, `g(f(x))` must be equivalent to `(g • f)(x)`. Composition
+must be associative `f • (g • h)` is the same as `(f • g) • h` Since
+these rules govern composition at very abstract level, category theory
+is great at uncovering new ways of composing things.
+
+### Further reading
+
+-   [Category Theory for
+    Programmers](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/)
+
+\#\# Value
+
+Anything that can be assigned to a variable.
+
+``` r
+5
+#> [1] 5
+list(name = "John", age = 30)
+#> $name
+#> [1] "John"
+#> 
+#> $age
+#> [1] 30
+\(a) a
+#> \(a) a
+c(1, 2)
+#> [1] 1 2
+NULL
+#> NULL
+```
+
+## Constant
+
+A variable that cannot be reassigned once defined.
+
+``` r
+five <- 5
+lockBinding("five", globalenv())
+
+john <- list(name = "John", age = 30)
+lockBinding("john", globalenv())
+```
+
+Constants are \[referentially
+transparent\](<https://github.com/hemanth/functional-programming-jargon/blob/master/readme.md#referential-transparency>.
+That is, they can be replaced with the values that they represent
+without affecting the result.
+
+With the above two constants the following expression will always return
+`TRUE`.
+
+``` r
+john$age + five == list(name = "John", age = 30)$age + 5
+#> [1] TRUE
+```
+
+## Functor
+
+An object that implements a `map` function which, while running over
+each value in the object to produce a new object, adheres to two rules:
+
+### Preserves identity
+
+``` r
+Map(\(x) x, object) == object
+```
+
+### Composable
+
+``` r
+Map(compose(f, g), object) == Map(f, Map(g, object))
+```
+
+(`f`, `g` are arbitrary functions)
+
+A common functor in R is a list since it abides to the two functor
+rules:
+
+``` r
+Map(\(x) x, list(1, 2, 3))
+#> [[1]]
+#> [1] 1
+#> 
+#> [[2]]
+#> [1] 2
+#> 
+#> [[3]]
+#> [1] 3
+```
+
+and
+
+``` r
+f <- \(x) x + 1
+g <- \(x) x * 2
+
+Map(\(x) f(g(x)), list(1, 2, 3))
+#> [[1]]
+#> [1] 3
+#> 
+#> [[2]]
+#> [1] 5
+#> 
+#> [[3]]
+#> [1] 7
+Map(f, Map(g, list(1, 2, 3)))
+#> [[1]]
+#> [1] 3
+#> 
+#> [[2]]
+#> [1] 5
+#> 
+#> [[3]]
+#> [1] 7
+```
+
+## Pointed Functor
+
+An object with an `of` function that puts any single value into it.
+
+``` r
+list_of <- function(x) list(x)
+list_of(1)
+#> [[1]]
+#> [1] 1
 ```

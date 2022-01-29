@@ -101,21 +101,19 @@ arity
 # The arity of sum is 2
 ```
 
+
 ## Higher-Order Functions (HOF)
 
 A function which takes a function as an argument and/or returns a function.
-
-```{r}
-filter <- \(predicate, xs) Filter(predicate, xs)
-```
 
 ```{r}
 is <- \(type) \(x) inherits(x, type)
 ```
 
 ```{r}
-filter(is("numeric"), list(0, "1", 2, NULL)) 
+Filter(is("numeric"), list(0, "1", 2, NULL)) 
 ```
+
 
 ## Closure
 
@@ -124,7 +122,6 @@ Formally, a closure is a technique for implementing lexically scoped named bindi
 
 A closure is a scope which captures local variables of a function for access even after the execution has moved out of the block in which it is defined.
 ie. they allow referencing a scope after the block in which the variables were declared has finished executing.
-
 
 ```{r}
 add_to <- \(x) \(y) x + y
@@ -143,14 +140,10 @@ Lambda Vs Closure: A lambda is essentially a function that is defined inline rat
 
 A closure is a function that encloses its surrounding state by referencing fields external to its body. The enclosed state remains across invocations of the closure.
 
-__Further reading/Sources__
-- [Lambda Vs Closure](http://stackoverflow.com/questions/220658/what-is-the-difference-between-a-closure-and-a-lambda)
-- [JavaScript Closures highly voted discussion](http://stackoverflow.com/questions/111102/how-do-javascript-closures-work)
 
 ## Partial Application
 
 Partially applying a function means creating a new function by pre-filling some of the arguments to the original function.
-
 
 ```{r}
 # Helper to create partially applied functions
@@ -195,8 +188,6 @@ add_2 <- curried_sum(2)
 add_2(10)
 ```
 
-__Further reading__
-- [Favoring Curry](http://fr.umio.us/favoring-curry/)
 
 ## Function Composition
 
@@ -204,9 +195,10 @@ The act of putting two functions together to form a third function where the out
 
 ```{r}
 compose <- \(f, g) \(a) f(g(a)) # Definition
-floor_and_to_string <- compose(\(val) as.character(val), floor) # Usage
+floor_and_to_string <- compose(as.character, floor) # Usage
 floor_and_to_string(121.212121)
 ```
+
 
 ## Continuation
 
@@ -233,6 +225,7 @@ continue_program_with <- \(data) {
 tryCatch(read.csv("path/to/file"), error = \(e) e) |> # handle error
   continue_program_with()
 ```
+
 
 ## Purity
 
@@ -268,7 +261,8 @@ greet("Brianne")
 greeting 
 ```
 
-... and this one modifies state outside of the function.
+...and this one modifies state outside of the function.
+
 
 ## Side effects
 
@@ -281,6 +275,7 @@ different_every_time = Sys.time()
 ```{r}
 print("IO is a side effect!")
 ```
+
 
 ## Idempotent
 
@@ -298,13 +293,14 @@ abs(abs(10))
 sort(sort(sort(c(2, 1))))
 ```
 
+
 ## Point-Free Style
 
 Writing functions where the definition does not explicitly identify the arguments used. This style usually requires currying or other Higher-Order functions. A.K.A Tacit programming.
 
 ```{r}
 # Given
-map <- \(fn) \(list) lapply(list, fn)
+map <- \(fn) \(list) Map(fn, list)
 add <- \(a) \(b) a + b
 
 # Then
@@ -316,6 +312,9 @@ increment_all <- \(numbers) map(add(1))(numbers)
 increment_all_2 = map(add(1))
 ```
 
+`increment_all` identifies and uses the parameter `numbers`, so it is not points-free. increment_all_2 is written just by combining functions and values, making no mention of its arguments. It is points-free.
+
+
 ## Predicate
 
 A predicate is a function that returns true or false for a given value. A common use of a predicate is as the callback for array filter.
@@ -325,6 +324,7 @@ predicate <- \(a) a > 2
 
 Filter(predicate, c(1, 2, 3, 4))
 ```
+
 
 ## Contracts
 
@@ -344,4 +344,100 @@ add_one <- \(num) { contract(num); num + 1 }
 add_one(2L)
 add_one("some string") |> tryCatch(error = \(e) print(e))
 ```
+
+
+## Category
+
+A category in category theory is a collection of objects and morphisms between them. In programming, typically types act as the objects and functions as morphisms.
+
+To be a valid category 3 rules must be met:
+
+There must be an identity morphism that maps an object to itself. Where a is an object in some category, there must be a function from `a -> a`.
+Morphisms must compose. Where `a`, `b`, and `c` are objects in some category, and `f` is a morphism from `a -> b`, and `g` is a morphism from `b -> c`, `g(f(x))` must be equivalent to `(g • f)(x)`.
+Composition must be associative `f • (g • h)` is the same as `(f • g) • h`
+Since these rules govern composition at very abstract level, category theory is great at uncovering new ways of composing things.
+
+### Further reading
+ 
+ - [Category Theory for Programmers](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/)
+ 
+ 
+ ## Value
+ 
+ Anything that can be assigned to a variable.
+
+```{r}
+5
+list(name = "John", age = 30)
+\(a) a
+c(1, 2)
+NULL
+```
+
+
+## Constant
+
+A variable that cannot be reassigned once defined.
+
+```{r}
+five <- 5
+lockBinding("five", globalenv())
+
+john <- list(name = "John", age = 30)
+lockBinding("john", globalenv())
+```
+
+Constants are [referentially transparent](https://github.com/hemanth/functional-programming-jargon/blob/master/readme.md#referential-transparency. That is, they can be replaced with the values that they represent without affecting the result.
+
+With the above two constants the following expression will always return `TRUE`.
+
+```{r}
+john$age + five == list(name = "John", age = 30)$age + 5
+```
+
+
+## Functor
+
+An object that implements a `map` function which, while running over each value in the object to produce a new object, adheres to two rules:
+
+### Preserves identity
+
+```{r, eval=FALSE}
+Map(\(x) x, object) == object
+```
+
+### Composable
+
+```{r, eval=FALSE}
+Map(compose(f, g), object) == Map(f, Map(g, object))
+```
+
+(`f`, `g` are arbitrary functions)
+
+A common functor in R is a list since it abides to the two functor rules:
+
+```{r}
+Map(\(x) x, list(1, 2, 3))
+```
+
+and
+
+```{r}
+f <- \(x) x + 1
+g <- \(x) x * 2
+
+Map(\(x) f(g(x)), list(1, 2, 3))
+Map(f, Map(g, list(1, 2, 3)))
+```
+
+
+## Pointed Functor
+
+An object with an `of` function that puts any single value into it.
+
+```{r}
+list_of <- function(x) list(x)
+list_of(1)
+```
+
 
